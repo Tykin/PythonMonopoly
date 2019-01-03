@@ -16,96 +16,21 @@ Player1InJail = 0
 Player2InJail = 0
 Player3InJail = 0
 Player4InJail = 0
-from MonopolyMap import MonopolyMap
 
-def HowManyPlayers():
-    print("It is recommended to put this game into fullscreen.")
-    print("How many players? (2-4)")
-    while True:
-            try:
-                    x = int(input())
-                    if x == 4:
-                            return 4
-                    elif x == 3:
-                            return 3
-                    elif x == 2:
-                            return 2
-                    else:
-                            print("That is not 2, 3, or 4")
-            except Exception:
-                    print("That isn't a int.")
-
+#Dicerolls. If there is 0 and 30 that appear in the game there must be an error.
 rollOne = 0
 rollTwo = 30
 
-def DiceRoll(y):
-        global rollOne
-        global rollTwo
-        rollOne = 1
-        rollTwo = 1
-        rollOne = random.randint(1, 6)
-        rollTwo = random.randint(1, 6)
-        s = DicePictures[rollOne-1] + " " + DicePictures[rollTwo-1] #12 left, 6 down 7 total
-        #ss = ""
-        #for i in range(0, 11):
-        #        for ii in range(1, 6):
-        #                ss += Substr(s, ii, i)
-        #        ss += "\n"
-                        
-        print(s)
-        return rollOne + rollTwo
+#All Imports go here
+from MonopolyMap import MonopolyMap
+from MonopolyGameOver import GameOver
+from PlayersAndRolls import HowManyPlayers
+from PlayersAndRolls import DiceRoll
+from PlayersAndRolls import ReturnRollOne
+from PlayersAndRolls import ReturnRollTwo
+from Property import createPropertyList
 
-def GameOver():
-    if Player1Money < 0:
-        print("Player 1 has no more money.")
-        if Player2Money > Player3Money and Player2Money > Player4Money:
-            print("Player 2 has the most money, Player 2 is the winner.")
-            input()
-        elif Player3Money > Player2Money and Player3Money > Player4Money:
-            print("Player 3 has the most money, Player 3 is the winner.")
-            input()
-        else:
-            print("Player 4 has the most money, Player 4 is the winner.")
-            input()
-        sys.exit(0)
-    elif Player2Money < 0:
-        print("Player 2 has no more money.")
-        if Player1Money > Player3Money and Player1Money > Player4Money:
-            print("Player 1 has the most money, Player 1 is the winner.")
-            input()
-        elif Player3Money > Player1Money and Player3Money > Player4Money:
-            print("Player 3 has the most money, Player 3 is the winner.")
-            input()
-        else:
-            print("Player 4 has the most money, Player 4 is the winner.")
-            input()
-        sys.exit(0)
-    elif Player3Money < 0:
-        print("Player 3 has no more money.")
-        if Player1Money > Player2Money and Player1Money > Player4Money:
-            print("Player 1 has the most money, Player 1 is the winner.")
-            input()
-        elif Player2Money > Player1Money and Player2Money > Player4Money:
-            print("Player 2 has the most money, Player 2 is the winner.")
-            input()
-        else:
-            print("Player 4 has the most money, Player 4 is the winner.")
-            input()
-        sys.exit(0)
-    elif Player4Money < 0:
-        print("Player 4 has no more money.")
-        if Player1Money > Player2Money and Player1Money > Player3Money:
-            print("Player 1 has the most money, Player 1 is the winner.")
-            input()
-        elif Player2Money > Player1Money and Player2Money > Player3Money:
-            print("Player 2 has the most money, Player 2 is the winner.")
-            input()
-        else:
-            print("Player 3 has the most money, Player 3 is the winner.")
-            input()
-        sys.exit(0)
-
-
+#Useless ints that has been replaced with list3
 MediterraneanAve = 0
 BalticAve = 0
 ReadingRailroad = 0
@@ -136,7 +61,7 @@ ShortLineRailroad = 0
 ParkPlace = 0
 Boardwalk = 0
 
-
+#Useless ints that has been replaced with list4
 MediterraneanAveRent = 2
 BalticAveRent = 4
 ReadingRailroadRent = 25
@@ -167,6 +92,14 @@ ParkPlaceRent = 35
 BoardwalkRent = 50
 
 list1, list2, list3, list4, list5 = [[] for _ in range(5)]
+
+propertyList = createPropertyList()
+
+print(f"My propety list is {len(propertyList)}")
+# Test out a property.
+boardWalk = propertyList[21]
+print(boardWalk.rentIfMonopoly(propertyList))
+
 #             1                   2                3                4                 5                   6                  7              8                   9               10                11                12              13          14              15              16              17                 18              19                        20                 21         22           23                   24                         25              26                
 list1 = ["Mediterranean Ave.", "Baltic Ave.", "Oriental Ave.", "Vermont Ave.", "Connecticut Ave.", "St. Charles Place", "States Ave.", "Virginia Ave.","St. James Place", "Tennessee Ave.", "New York Ave.", "Kentucky Ave.","Indiana Ave.","Illinois Ave.","Atlantic Ave.","Ventnor Ave.", "Marvin Gardens", "Pacific Ave.", "North Carolina Ave.", "Pennsylvania Ave.","Park Place", "Boardwalk", "Reading Railroad", "Pennsylvania Railroad","B. & O. Railroad","Short Line Railroad","Electric Company","Water Works"]
 #Cost of places
@@ -183,7 +116,7 @@ list5 = [0, 0, 0,  0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0  ,0
 #Most likely need a mortgage value.
 #Need to add waterworks and electric company to for loops once finish.
 
-def UseTheList(LandedOn, WhosThis):
+def lookupProperty(LandedOn, WhosThis):
         global Player1Money
         global Player2Money
         global Player3Money
@@ -193,7 +126,9 @@ def UseTheList(LandedOn, WhosThis):
             print("Player 1 has landed on "+str(list1[LandedOn])+"\nWould you like to buy it for $"+str(list2[LandedOn])+" (Yes/No)(can also use y/n)(Rent - "+str(list4[LandedOn])+").")
             while True:
                 if Player1Money < list2[LandedOn]:
-                    print("You don't have enouge money to pay " + str(list1[LandedOn]))
+                    print("You don't have enough money to pay " + str(list1[LandedOn]))
+                    input()
+                    GameOver(Player1Money, Player2Money, Player3Money, Player4Money)
                     break
                 Answer = input().lower()
                 if Answer == 'yes' or Answer == 'ye' or Answer == 'y':
@@ -217,13 +152,15 @@ def UseTheList(LandedOn, WhosThis):
                 Player3Money += list4[LandedOn]
             else:
                 Player4Money += list4[LandedOn]
-            GameOver()
+            GameOver(Player1Money, Player2Money, Player3Money, Player4Money)
             input()
         elif list3[LandedOn] == 0 and WhosThis == 2:
             print("Player 2 has landed on "+str(list1[LandedOn])+"\nWould you like to buy it for $"+str(list2[LandedOn])+" (Yes/No)(can also use y/n)(Rent - "+str(list4[LandedOn])+").")
             while True:
                 if Player2Money < list2[LandedOn]:
-                    print("You don't have enouge money to pay " + str(list1[LandedOn]))
+                    print("You don't have enough money to pay " + str(list1[LandedOn]))
+                    input()
+                    GameOver(Player1Money, Player2Money, Player3Money, Player4Money)
                     break
                 Answer = input().lower()
                 if Answer == 'yes' or Answer == 'ye' or Answer == 'y':
@@ -240,9 +177,6 @@ def UseTheList(LandedOn, WhosThis):
             input()
         elif list3[LandedOn] != 2 and list3[LandedOn] != 0 and WhosThis == 2:
             print("Player 2 has landed on "+str(list1[LandedOn])+"\nPlayer " + str(list3[LandedOn])+" owns this place and it cost $" + str(list4[LandedOn])  +"\nPress enter.")
-            #if LandedOn == 26 or LandedOn == 27:###################################################################################################################################################################################################################################
-            #        waterElectric
-            #else:
             Player2Money -= list4[LandedOn]
             if list3[LandedOn] == 1:
                 Player1Money += list4[LandedOn]
@@ -250,13 +184,15 @@ def UseTheList(LandedOn, WhosThis):
                 Player3Money += list4[LandedOn]
             else:
                 Player4Money += list4[LandedOn]
-            GameOver()
+            GameOver(Player1Money, Player2Money, Player3Money, Player4Money)
             input()
         elif list3[LandedOn] == 0 and WhosThis == 3:
             print("Player 3 has landed on "+str(list1[LandedOn])+"\nWould you like to buy it for $"+str(list2[LandedOn])+" (Yes/No)(can also use y/n)(Rent - "+str(list4[LandedOn])+").")
             while True:
                 if Player3Money < list2[LandedOn]:
-                    print("You don't have enouge money to pay "+str(list1[LandedOn]))
+                    print("You don't have enough money to pay "+str(list1[LandedOn]))
+                    input
+                    GameOver(Player1Money, Player2Money, Player3Money, Player4Money)
                     break
                 Answer = input().lower()
                 if Answer == 'yes' or Answer == 'ye' or Answer == 'y':
@@ -280,13 +216,15 @@ def UseTheList(LandedOn, WhosThis):
                 Player2Money += list4[LandedOn]
             else:
                 Player4Money += list4[LandedOn]
-            GameOver()
+            GameOver(Player1Money, Player2Money, Player3Money, Player4Money)
             input()
         elif list3[LandedOn] == 0 and WhosThis == 4:
             print("Player 4 has landed on "+str(list1[LandedOn])+"\nWould you like to buy it for $"+str(list2[LandedOn])+" (Yes/No)(can also use y/n)(Rent - "+str(list4[LandedOn])+").")
             while True:
                 if Player4Money < list2[LandedOn]:
-                    print("You don't have enouge money to pay "+str(list1[LandedOn]))
+                    print("You don't have enough money to pay "+str(list1[LandedOn]))
+                    input()
+                    GameOver(Player1Money, Player2Money, Player3Money, Player4Money)
                     break
                 Answer = input().lower()
                 if Answer == 'yes' or Answer == 'ye' or Answer == 'y':
@@ -310,7 +248,7 @@ def UseTheList(LandedOn, WhosThis):
                 Player2Money += list4[LandedOn]
             else:
                 Player3Money += list4[LandedOn]
-            GameOver()
+            GameOver(Player1Money, Player2Money, Player3Money, Player4Money)
             input()
 
 def LandedPlaces(landedOn, WhosThis):
@@ -328,135 +266,102 @@ def LandedPlaces(landedOn, WhosThis):
         print("Player " + str(WhosThis) + " landed on Go! (Press Enter)")#Landed on go
         input()
     elif landedOn == 2:#Landed on Mediterranean Ave.
-            UseTheList(0, WhosThis)
+            lookupProperty(0, WhosThis)
     elif landedOn == 3: #Need to change later to add random chance in community chest
         if WhosThis == 1:
             Player1Money += 50
-            print("Player 1 landed on the Community Chest\nSince I haven't added the random chance, here's 50 dollars. (Press Enter)")
-            input()
         elif WhosThis == 2:
             Player2Money += 50
-            print("Player 2 landed on the Community Chest\nSince I haven't added the random chance, here's 50 dollars. (Press Enter)")
-            input()
         elif WhosThis == 3:
             Player3Money += 50
-            print("Player 3 landed on the Community Chest\nSince I haven't added the random chance, here's 50 dollars. (Press Enter)")
-            input()
         else:
             Player4Money += 50
-            print("Player 4 landed on the Community Chest\nSince I haven't added the random chance, here's 50 dollars. (Press Enter)")
-            input()
+        print("Player " + str(WhosThis) + " landed on the Community Chest\nSince I haven't added the random chance, here's 50 dollars. (Press Enter)")
+        input()
     elif landedOn == 4:#Baltic Ave.
-           UseTheList(1, WhosThis)
+           lookupProperty(1, WhosThis)
     elif landedOn == 5:#Income Tax
         if WhosThis == 1:
             if (int)(Player1Money/10) < 200:
                 print("Player 1 landed on the Income Tax\nPlayer 1 had to pay 10% of his value in tax which was " + str((int)(Player1Money/10)) + ". (Press Enter)")
                 FreeParkingMoney += (int)(Player1Money/10)
                 Player1Money -= (int)(Player1Money/10)
-                GameOver()
-                input()
             else:
                 FreeParkingMoney += 200
                 Player1Money -= 200
                 print("Player 1 landed on the Income Tax\nPlayer 1 had to pay $200 in tax. (Press Enter)")
-                GameOver()
-                input()
         elif WhosThis == 2:
             if (int)(Player2Money/10) < 200:
                 print("Player 2 landed on the Income Tax\nPlayer 2 had to pay 10% of his value in tax which was " + str((int)(Player2Money/10)) + ". (Press Enter)")
                 FreeParkingMoney += (int)(Player2Money/10)
                 Player2Money -= (int)(Player2Money/10)
-                GameOver()
-                input()
             else:
                 FreeParkingMoney += 200
                 Player2Money -= 200
                 print("Player 2 landed on the Income Tax\nPlayer 2 had to pay $200 in tax. (Press Enter)")
-                GameOver()
-                input()
         elif WhosThis == 3:
             if (int)(Player3Money/10) < 200:
                 print("Player 3 landed on the Income Tax\nPlayer 3 had to pay 10% of his value in tax which was " + str((int)(Player3Money/10)) + ". (Press Enter)")
                 FreeParkingMoney += (int)(Player3Money/10)
                 Player3Money -= (int)(Player3Money/10)
-                GameOver()
-                input()
             else:
                 FreeParkingMoney += 200
                 Player3Money -= 200
                 print("Player 3 landed on the Income Tax\nPlayer 3 had to pay $200 in tax. (Press Enter)")
-                GameOver()
-                input()
         else:
             if (int)(Player4Money/10) < 200:
                 print("Player 4 landed on the Income Tax\nPlayer 4 had to pay 10% of his value in tax which was " + str((int)(Player4Money/10)) + ". (Press Enter)")
                 FreeParkingMoney += (int)(Player4Money/10)
                 Player4Money -= (int)(Player4Money/10)
-                GameOver()
-                input()
             else:
                 FreeParkingMoney += 200
                 Player4Money -= 200
                 print("Player 4 landed on the Income Tax\nPlayer 4 had to pay $200 in tax. (Press Enter)")
-                GameOver()
-                input()
+        GameOver(Player1Money, Player2Money, Player3Money, Player4Money)
+        input()
     elif landedOn == 6:#Reading Railroad
-            UseTheList(22, WhosThis)
+            lookupProperty(22, WhosThis)
     elif landedOn == 7:#Oriental Ave.
-            UseTheList(2, WhosThis)
+            lookupProperty(2, WhosThis)
     elif landedOn == 8:
             if WhosThis == 1:
                     Player1Money += 50
-                    print("Player 1 landed on Chance\nSince I haven't added the random chance, here's 50 dollars. (Press Enter)")
-                    input()
             elif WhosThis == 2:
                     Player2Money += 50
-                    print("Player 2 landed on Chance\nSince I haven't added the random chance, here's 50 dollars. (Press Enter)")
-                    input()
             elif WhosThis == 3:
                     Player3Money += 50
-                    print("Player 3 landed on Chance\nSince I haven't added the random chance, here's 50 dollars. (Press Enter)")
-                    input()
             else:
                     Player4Money += 50
-                    print("Player 4 landed on Chance\nSince I haven't added the random chance, here's 50 dollars. (Press Enter)")
-                    input()
+            print("Player " + str(WhosThis) + " landed on Chance\nSince I haven't added the random chance, here's 50 dollars. (Press Enter)")
+            input()
     elif landedOn == 9:
-            UseTheList(3, WhosThis)
+            lookupProperty(3, WhosThis)
     elif landedOn == 10:
-            UseTheList(4, WhosThis)
+            lookupProperty(4, WhosThis)
     elif landedOn == 11:
             if WhosThis == 1:
                     if Player1InJail == 0:
                             print("Player 1 is just visiting jail. (Press Enter)")
-                            input()
                     else:
                             print("Player 1 is currently in jail. (Press Enter)")
-                            input()
             elif WhosThis == 2:
                     if Player2InJail == 0:
                             print("Player 2 is just visiting jail. (Press Enter)")
-                            input()
                     else:
                             print("Player 2 is currently in jail. (Press Enter)")
-                            input()
             elif WhosThis == 3:
                     if Player3InJail == 0:
                             print("Player 3 is just visiting jail. (Press Enter)")
-                            input()
                     else:
                             print("Player 3 is currently in jail. (Press Enter)")
-                            input()
             else:
                     if Player4InJail == 0:
                             print("Player 4 is just visiting jail. (Press Enter)")
-                            input()
                     else:
                             print("Player 4 is currently in jail. (Press Enter)")
-                            input()
+            input()
     elif landedOn == 12:
-            UseTheList(5, WhosThis)
+            lookupProperty(5, WhosThis)
     elif landedOn == 13:#26
             if list3[26] != 0:
                     if list3[26] == list3[27]:
@@ -464,92 +369,71 @@ def LandedPlaces(landedOn, WhosThis):
                     else:
                             list4[26] = random.randint(2, 12) * 4
             if WhosThis == 1:
-                    UseTheList(26, WhosThis)
+                    lookupProperty(26, WhosThis)
             elif WhosThis == 2:
-                    UseTheList(26, WhosThis)
+                    lookupProperty(26, WhosThis)
             elif WhosThis == 3:
-                    UseTheList(26, WhosThis)
+                    lookupProperty(26, WhosThis)
             else:
-                    UseTheList(26, WhosThis)
+                    lookupProperty(26, WhosThis)
     elif landedOn == 14:
-            UseTheList(6, WhosThis)
+            lookupProperty(6, WhosThis)
     elif landedOn == 15:
-            UseTheList(7, WhosThis)
+            lookupProperty(7, WhosThis)
     elif landedOn == 16:
-            UseTheList(23, WhosThis)
+            lookupProperty(23, WhosThis)
     elif landedOn == 17:
-            UseTheList(8, WhosThis)            
+            lookupProperty(8, WhosThis)            
     elif landedOn == 18:
             if WhosThis == 1:
                     Player1Money += 50
-                    print("Player 1 landed on the Community Chest\nSince I haven't added the random chance, here's 50 dollars. (Press Enter)")
-                    input()
             elif WhosThis == 2:
                     Player2Money += 50
-                    print("Player 2 landed on the Community Chest\nSince I haven't added the random chance, here's 50 dollars. (Press Enter)")
-                    input()
             elif WhosThis == 3:
                     Player3Money += 50
-                    print("Player 3 landed on the Community Chest\nSince I haven't added the random chance, here's 50 dollars. (Press Enter)")
-                    input()
             else:
                     Player4Money += 50
-                    print("Player 4 landed on the Community Chest\nSince I haven't added the random chance, here's 50 dollars. (Press Enter)")
-                    input()
+            print("Player "+ str(WhosThis) +" landed on the Community Chest\nSince I haven't added the random chance, here's 50 dollars. (Press Enter)")
+            input()
     elif landedOn == 19:
-            UseTheList(9, WhosThis)
+            lookupProperty(9, WhosThis)
     elif landedOn == 20:
-            UseTheList(10, WhosThis)
+            lookupProperty(10, WhosThis)
     elif landedOn == 21:
             if WhosThis == 1:
                     Player1Money += FreeParkingMoney
-                    print("Player 1 landed on Free Parking\nPlayer 1 has gained $" + str(FreeParkingMoney) + "!")
-                    FreeParkingMoney = 0
-                    input()
             elif WhosThis == 2:
                     Player2Money += FreeParkingMoney
-                    print("Player 2 landed on Free Parking\nPlayer 2 has gained $" + str(FreeParkingMoney) + "!")
-                    FreeParkingMoney = 0
-                    input()
             elif WhosThis == 3:
                     Player3Money += FreeParkingMoney
-                    print("Player 3 landed on Free Parking\nPlayer 3 has gained $" + str(FreeParkingMoney) + "!")
-                    FreeParkingMoney = 0
-                    input()
             else:
                     Player4Money += FreeParkingMoney
-                    print("Player 4 landed on Free Parking\nPlayer 4 has gained $" + str(FreeParkingMoney) + "!")
-                    FreeParkingMoney = 0
-                    input()            
+            print("Player " + str(WhosThis) + " landed on Free Parking\nPlayer 4 has gained $" + str(FreeParkingMoney) + "!")
+            FreeParkingMoney = 0
+            input()            
     elif landedOn == 22:
-            UseTheList(11, WhosThis) 
+            lookupProperty(11, WhosThis) 
     elif landedOn == 23:
             if WhosThis == 1:
                     Player1Money += 50
-                    print("Player 1 landed on Chance\nSince I haven't added the random chance, here's 50 dollars. (Press Enter)")
-                    input()
             elif WhosThis == 2:
                     Player2Money += 50
-                    print("Player 2 landed on Chance\nSince I haven't added the random chance, here's 50 dollars. (Press Enter)")
-                    input()
             elif WhosThis == 3:
                     Player3Money += 50
-                    print("Player 3 landed on Chance\nSince I haven't added the random chance, here's 50 dollars. (Press Enter)")
-                    input()
             else:
                     Player4Money += 50
-                    print("Player 4 landed on Chance\nSince I haven't added the random chance, here's 50 dollars. (Press Enter)")
-                    input()
+            print("Player " + str(WhosThis) + " landed on Chance\nSince I haven't added the random chance, here's 50 dollars. (Press Enter)")
+            input()
     elif landedOn == 24:
-            UseTheList(12, WhosThis)
+            lookupProperty(12, WhosThis)
     elif landedOn == 25:
-            UseTheList(13, WhosThis)
+            lookupProperty(13, WhosThis)
     elif landedOn == 26:
-            UseTheList(24, WhosThis)
+            lookupProperty(24, WhosThis)
     elif landedOn == 27:
-            UseTheList(14, WhosThis)
+            lookupProperty(14, WhosThis)
     elif landedOn == 28:
-            UseTheList(15, WhosThis)
+            lookupProperty(15, WhosThis)
     elif landedOn == 29:#27
             if list3[27] != 0:
                     if list3[26] == list3[27]:
@@ -557,123 +441,81 @@ def LandedPlaces(landedOn, WhosThis):
                     else:
                             list4[27] = random.randint(2, 12) * 4
             if WhosThis == 1:
-                    #print("Player 1 has landed on the Water Works. (Press Enter)")
-                    UseTheList(27, WhosThis)
-                    #input()
+                    lookupProperty(27, WhosThis)
             elif WhosThis == 2:
-                    #print("Player 2 has landed on the Water Works. (Press Enter)")
-                    UseTheList(27, WhosThis)
-                    #input()
+                    lookupProperty(27, WhosThis)
             elif WhosThis == 3:
-                    #print("Player 3 has landed on the Water Works. (Press Enter)")
-                    UseTheList(27, WhosThis)
-                    #input()
+                    lookupProperty(27, WhosThis)
             else:
-                    #print("Player 4 has landed on the Water Works. (Press Enter)")
-                    UseTheList(27, WhosThis)
-                    #input()
+                    lookupProperty(27, WhosThis)
     elif landedOn == 30:
-            UseTheList(16, WhosThis)
+            lookupProperty(16, WhosThis)
     elif landedOn == 31:
             global Player1Location
             global Player2Location
             global Player3Location
             global Player4Location
             if WhosThis == 1:
-                    print("Player 1 has to go to Jail. (Press Enter)")
-                    input()
-                    #global Player1InJail
                     Player1InJail = 1
                     Player1Location = 11
             elif WhosThis == 2:
-                    print("Player 2 has to go to Jail. (Press Enter)")
-                    input()
-                    #global Player2InJail
                     Player2InJail = 1
                     Player2Location = 11
             elif WhosThis == 3:
-                    print("Player 3 has to go to Jail. (Press Enter)")
-                    input()
-                    #global Player3InJail
                     Player3InJail = 1
                     Player3Location = 11
             else:
-                    print("Player 4 has to go to Jail. (Press Enter)")
-                    input()
-                    #global Player4InJail
                     Player4InJail = 1
                     Player4Location = 11
+            print("Player " + str(WhosThis) + " has to go to Jail. (Press Enter)")
+            input()
     elif landedOn == 32:
-            UseTheList(17, WhosThis)
+            lookupProperty(17, WhosThis)
     elif landedOn == 33:
-            UseTheList(18, WhosThis)
+            lookupProperty(18, WhosThis)
     elif landedOn == 34:
             if WhosThis == 1:
                     Player1Money += 50
-                    print("Player 1 landed on the Community Chest\nSince I haven't added the random chance, here's 50 dollars. (Press Enter)")
-                    input()
             elif WhosThis == 2:
                     Player2Money += 50
-                    print("Player 2 landed on the Community Chest\nSince I haven't added the random chance, here's 50 dollars. (Press Enter)")
-                    input()
             elif WhosThis == 3:
                     Player3Money += 50
-                    print("Player 3 landed on the Community Chest\nSince I haven't added the random chance, here's 50 dollars. (Press Enter)")
-                    input()
             else:
                     Player4Money += 50
-                    print("Player 4 landed on the Community Chest\nSince I haven't added the random chance, here's 50 dollars. (Press Enter)")
-                    input()
+            print("Player " + str(WhosThis) + " landed on the Community Chest\nSince I haven't added the random chance, here's 50 dollars. (Press Enter)")
+            input()
     elif landedOn == 35:
-            UseTheList(19, WhosThis)
+            lookupProperty(19, WhosThis)
     elif landedOn == 36:
-            UseTheList(25, WhosThis)            
+            lookupProperty(25, WhosThis)            
     elif landedOn == 37:
             if WhosThis == 1:
                     Player1Money += 50
-                    print("Player 1 landed on Chance\nSince I haven't added the random chance, here's 50 dollars. (Press Enter)")
-                    input()
             elif WhosThis == 2:
                     Player2Money += 50
-                    print("Player 2 landed on Chance\nSince I haven't added the random chance, here's 50 dollars. (Press Enter)")
-                    input()
             elif WhosThis == 3:
                     Player3Money += 50
-                    print("Player 3 landed on Chance\nSince I haven't added the random chance, here's 50 dollars. (Press Enter)")
-                    input()
             else:
                     Player4Money += 50
-                    print("Player 4 landed on Chance\nSince I haven't added the random chance, here's 50 dollars. (Press Enter)")
-                    input()
+            print("Player " + str(WhosThis) + " landed on Chance\nSince I haven't added the random chance, here's 50 dollars. (Press Enter)")
+            input()
     elif landedOn == 38:
-            UseTheList(20, WhosThis)    
+            lookupProperty(20, WhosThis)    
     elif landedOn == 39:
             if WhosThis == 1:
                     Player1Money -= 75
-                    FreeParkingMoney += 75
-                    print("Player 1 landed on Luxury Tax\nThey have to pay $75. (Press Enter)")
-                    input()
-                    GameOver()
             elif WhosThis == 2:
                     Player2Money -= 75
-                    FreeParkingMoney += 75
-                    print("Player 1 landed on Luxury Tax\nThey have to pay $75. (Press Enter)")
-                    input()
-                    GameOver()
             elif WhosThis == 3:
                     Player3Money -= 75
-                    FreeParkingMoney += 75
-                    print("Player 1 landed on Luxury Tax\nThey have to pay $75. (Press Enter)")
-                    input()
-                    GameOver()
             else:
                     Player4Money -= 75
-                    FreeParkingMoney += 75
-                    print("Player 1 landed on Luxury Tax\nThey have to pay $75. (Press Enter)")
-                    input()
-                    GameOver()            
+            FreeParkingMoney += 75
+            print("Player " + str(WhosThis) + " landed on Luxury Tax\nThey have to pay $75. (Press Enter)")
+            input()
+            GameOver(Player1Money, Player2Money, Player3Money, Player4Money)
     else:#40 / Boardwalk
-            UseTheList(21, WhosThis)
+            lookupProperty(21, WhosThis)
     MONOPOLY()
 
 def TradingWithPeople(StarterOfTrade, WhoTheyWantToTrade):
@@ -787,164 +629,33 @@ def TradingWithPeople(StarterOfTrade, WhoTheyWantToTrade):
                                                 GiveMoney1 = int(GiveMoney1)
                                                 GiveMoney2 = int(GiveMoney2)
                                                 if WhoTheyWantToTrade == 2:
-                                                        Player1Money -= GiveMoney1
-                                                        Player1Money += GiveMoney2
-                                                        Player2Money -= GiveMoney2
-                                                        Player2Money += GiveMoney1
-                                                        for x in range(0, 28):
-                                                                if list5[x] == StarterOfTrade:
-                                                                        list3[x] = StarterOfTrade
-                                                                if list5[x] == WhoTheyWantToTrade:
-                                                                        list3[x] = WhoTheyWantToTrade
-                                                        print("The deal was succesful. (Please press enter to continue.)")
-                                                        exitTradeLoop = 1
-                                                        input()
+                                                        GivingAway(1, 2, GiveMoney1, GiveMoney2, StarterOfTrade, WhoTheyWantToTrade)
                                                 elif WhoTheyWantToTrade == 3:
-                                                        Player1Money -= GiveMoney1
-                                                        Player1Money += GiveMoney2
-                                                        Player3Money -= GiveMoney2
-                                                        Player3Money += GiveMoney1
-                                                        for x in range(0, 28):
-                                                                if list5[x] == StarterOfTrade:
-                                                                        list3[x] = StarterOfTrade
-                                                                if list5[x] == WhoTheyWantToTrade:
-                                                                        list3[x] = WhoTheyWantToTrade
-                                                        print("The deal was succesful. (Please press enter to continue.)")
-                                                        exitTradeLoop = 1
-                                                        input()
+                                                        GivingAway(1, 3, GiveMoney1, GiveMoney2, StarterOfTrade, WhoTheyWantToTrade)
                                                 else:
-                                                        Player1Money -= GiveMoney1
-                                                        Player1Money += GiveMoney2
-                                                        Player4Money -= GiveMoney2
-                                                        Player4Money += GiveMoney1
-                                                        for x in range(0, 28):
-                                                                if list5[x] == StarterOfTrade:
-                                                                        list3[x] = StarterOfTrade
-                                                                if list5[x] == WhoTheyWantToTrade:
-                                                                        list3[x] = WhoTheyWantToTrade
-                                                        print("The deal was succesful. (Please press enter to continue.)")
-                                                        exitTradeLoop = 1
-                                                        input()
+                                                        GivingAway(1, 4, GiveMoney1, GiveMoney2, StarterOfTrade, WhoTheyWantToTrade)
                                         elif StarterOfTrade == 2:
                                                 if WhoTheyWantToTrade == 1:
-                                                        Player2Money -= GiveMoney1
-                                                        Player2Money += GiveMoney2
-                                                        Player1Money -= GiveMoney2
-                                                        Player1Money += GiveMoney1
-                                                        for x in range(0, 28):
-                                                                if list5[x] == StarterOfTrade:
-                                                                        list3[x] = StarterOfTrade
-                                                                if list5[x] == WhoTheyWantToTrade:
-                                                                        list3[x] = WhoTheyWantToTrade
-                                                        print("The deal was succesful. (Please press enter to continue.)")
-                                                        exitTradeLoop = 1
-                                                        input()
+                                                        GivingAway(2, 1, GiveMoney1, GiveMoney2, StarterOfTrade, WhoTheyWantToTrade)
                                                 elif WhoTheyWantToTrade == 3:
-                                                        Player2Money -= GiveMoney1
-                                                        Player2Money += GiveMoney2
-                                                        Player3Money -= GiveMoney2
-                                                        Player3Money += GiveMoney1
-                                                        for x in range(0, 28):
-                                                                if list5[x] == StarterOfTrade:
-                                                                        list3[x] = StarterOfTrade
-                                                                if list5[x] == WhoTheyWantToTrade:
-                                                                        list3[x] = WhoTheyWantToTrade
-                                                        print("The deal was succesful. (Please press enter to continue.)")
-                                                        exitTradeLoop = 1
-                                                        input()
+                                                        GivingAway(2, 3, GiveMoney1, GiveMoney2, StarterOfTrade, WhoTheyWantToTrade)
                                                 else:
-                                                        Player2Money -= GiveMoney1
-                                                        Player2Money += GiveMoney2
-                                                        Player4Money -= GiveMoney2
-                                                        Player4Money += GiveMoney1
-                                                        for x in range(0, 28):
-                                                                if list5[x] == StarterOfTrade:
-                                                                        list3[x] = StarterOfTrade
-                                                                if list5[x] == WhoTheyWantToTrade:
-                                                                        list3[x] = WhoTheyWantToTrade
-                                                        print("The deal was succesful. (Please press enter to continue.)")
-                                                        exitTradeLoop = 1
-                                                        input()
+                                                        GivingAway(2, 4, GiveMoney1, GiveMoney2, StarterOfTrade, WhoTheyWantToTrade)
                                         elif StarterOfTrade == 3:
                                                 if WhoTheyWantToTrade == 1:
-                                                        Player3Money -= GiveMoney1
-                                                        Player3Money += GiveMoney2
-                                                        Player1Money -= GiveMoney2
-                                                        Player1Money += GiveMoney1
-                                                        for x in range(0, 28):
-                                                                if list5[x] == StarterOfTrade:
-                                                                        list3[x] = StarterOfTrade
-                                                                if list5[x] == WhoTheyWantToTrade:
-                                                                        list3[x] = WhoTheyWantToTrade
-                                                        print("The deal was succesful. (Please press enter to continue.)")
-                                                        exitTradeLoop = 1
-                                                        input()
+                                                        GivingAway(3, 1, GiveMoney1, GiveMoney2, StarterOfTrade, WhoTheyWantToTrade)
                                                 elif WhoTheyWantToTrade == 2:
-                                                        Player3Money -= GiveMoney1
-                                                        Player3Money += GiveMoney2
-                                                        Player2Money -= GiveMoney2
-                                                        Player2Money += GiveMoney1
-                                                        for x in range(0, 28):
-                                                                if list5[x] == StarterOfTrade:
-                                                                        list3[x] = StarterOfTrade
-                                                                if list5[x] == WhoTheyWantToTrade:
-                                                                        list3[x] = WhoTheyWantToTrade
-                                                        print("The deal was succesful. (Please press enter to continue.)")
-                                                        exitTradeLoop = 1
-                                                        input()
+                                                        GivingAway(3, 2, GiveMoney1, GiveMoney2, StarterOfTrade, WhoTheyWantToTrade)
                                                 else:
-                                                        Player3Money -= GiveMoney1
-                                                        Player3Money += GiveMoney2
-                                                        Player4Money -= GiveMoney2
-                                                        Player4Money += GiveMoney1
-                                                        for x in range(0, 28):
-                                                                if list5[x] == StarterOfTrade:
-                                                                        list3[x] = StarterOfTrade
-                                                                if list5[x] == WhoTheyWantToTrade:
-                                                                        list3[x] = WhoTheyWantToTrade
-                                                        print("The deal was succesful. (Please press enter to continue.)")
-                                                        exitTradeLoop = 1
-                                                        input()
+                                                        GivingAway(3, 4, GiveMoney1, GiveMoney2, StarterOfTrade, WhoTheyWantToTrade)
                                         else:
                                                 if WhoTheyWantToTrade == 1:
-                                                        Player4Money -= GiveMoney1
-                                                        Player4Money += GiveMoney2
-                                                        Player1Money -= GiveMoney2
-                                                        Player1Money += GiveMoney1
-                                                        for x in range(0, 28):
-                                                                if list5[x] == StarterOfTrade:
-                                                                        list3[x] = StarterOfTrade
-                                                                if list5[x] == WhoTheyWantToTrade:
-                                                                        list3[x] = WhoTheyWantToTrade
-                                                        print("The deal was succesful. (Please press enter to continue.)")
-                                                        exitTradeLoop = 1
-                                                        input()
+                                                        GivingAway(4, 1, GiveMoney1, GiveMoney2, StarterOfTrade, WhoTheyWantToTrade)
                                                 elif WhoTheyWantToTrade == 2:
-                                                        Player4Money -= GiveMoney1
-                                                        Player4Money += GiveMoney2
-                                                        Player2Money -= GiveMoney2
-                                                        Player2Money += GiveMoney1
-                                                        for x in range(0, 28):
-                                                                if list5[x] == StarterOfTrade:
-                                                                        list3[x] = StarterOfTrade
-                                                                if list5[x] == WhoTheyWantToTrade:
-                                                                        list3[x] = WhoTheyWantToTrade
-                                                        print("The deal was succesful. (Please press enter to continue.)")
-                                                        exitTradeLoop = 1
-                                                        input()
+                                                        GivingAway(4, 2, GiveMoney1, GiveMoney2, StarterOfTrade, WhoTheyWantToTrade)
                                                 else:
-                                                        Player4Money -= GiveMoney1
-                                                        Player4Money += GiveMoney2
-                                                        Player3Money -= GiveMoney2
-                                                        Player3Money += GiveMoney1
-                                                        for x in range(0, 28):
-                                                                if list5[x] == StarterOfTrade:
-                                                                        list3[x] = StarterOfTrade
-                                                                if list5[x] == WhoTheyWantToTrade:
-                                                                        list3[x] = WhoTheyWantToTrade
-                                                        print("The deal was succesful. (Please press enter to continue.)")
-                                                        exitTradeLoop = 1
-                                                        input()
+                                                        GivingAway(4, 3, GiveMoney1, GiveMoney2, StarterOfTrade, WhoTheyWantToTrade)
+                                        exitTradeLoop = 1
                                         MONOPOLY()
                                         break
                                 elif AnswerToTrade.lower() == "no" or AnswerToTrade.lower() == "n":
@@ -973,6 +684,43 @@ def TradingWithPeople(StarterOfTrade, WhoTheyWantToTrade):
                         break
                 else:
                         print("I don't understand? Do you want to trade money, buildings, finish the trade, or exit?")
+
+def GivingAway(Player1, Player2, MoneyGiven1, MoneyGiven2, StarterOfTrade, WhoTheyWantToTrade):
+        global Player1Money
+        global Player2Money
+        global Player3Money
+        global Player4Money
+        if Player1 == 1:
+                Player1Money -= ((int)(MoneyGiven1))
+                Player1Money += ((int)(MoneyGiven2))
+        elif Player1 == 2:
+                Player2Money -= ((int)(MoneyGiven1))
+                Player2Money += ((int)(MoneyGiven2))
+        elif Player1 == 3:
+                Player3Money -= ((int)(MoneyGiven1))
+                Player3Money += ((int)(MoneyGiven2))
+        else:
+                Player4Money -= ((int)(MoneyGiven1))
+                Player4Money += ((int)(MoneyGiven2))
+        if Player2 == 1:
+                Player1Money -= ((int)(MoneyGiven2))
+                Player1Money += ((int)(MoneyGiven1))
+        elif Player2 == 2:
+                Player2Money -= ((int)(MoneyGiven2))
+                Player2Money += ((int)(MoneyGiven1))
+        elif Player2 == 3:
+                Player3Money -= ((int)(MoneyGiven2))
+                Player3Money += ((int)(MoneyGiven1))
+        else:
+                Player4Money -= ((int)(MoneyGiven2))
+                Player4Money += ((int)(MoneyGiven1))
+        for x in range(0, 28):
+                if list5[x] == StarterOfTrade:
+                        list3[x] = StarterOfTrade
+                if list5[x] == WhoTheyWantToTrade:
+                        list3[x] = WhoTheyWantToTrade
+        print("The deal was succesful. (Please press enter to continue.)")
+        input()
 
 GreenHouses = 32
 RedHotels = 12
@@ -1160,138 +908,78 @@ def HouseUpgrading(Player, CostOfHouse, Place):
 
         print("So, do you want to put houses on anything else? If not, you can just type exit to leave.")
                 
-#                      0  1  2  3  4  5  6  7
-#                      D  L     O     Y
-#                               r     e  G
-#                      B  B  P  a     l  r  B
-#                      l  l  i  n  R  l  e  l
-#                      u  u  n  g  e  o  e  u
-#                      e  e  k  e  d  w  n  e
+        #                      0  1  2  3  4  5  6  7
+        #                      D  L     O     Y
+        #                               r     e  G
+        #                      B  B  P  a     l  r  B
+        #                      l  l  i  n  R  l  e  l
+        #                      u  u  n  g  e  o  e  u
+        #                      e  e  k  e  d  w  n  e
+        # Already was a monopoly represents the the grouping of properties. We use this to check for whether
+        # Or not a player owns all of the properties on a given color.
 AlreadyWasAMonopoly = [0, 0, 0, 0, 0, 0, 0, 0]
 def MONOPOLY():
         global list3
-        global list4
+        global AlreadyWasAMonopoly
         if AlreadyWasAMonopoly[0] == 0 and list3[0] == list3[1] != 0:
-                list4[0] *= 2
-                list4[0] = (int)(list4[0])
-                list4[1] *= 2
-                list4[1] = (int)(list4[1])
-                AlreadyWasAMonopoly[0] = 1
+                ChangingList4Mult(0, 1, 99, 0)
         if AlreadyWasAMonopoly[0] == 1 and list3[0] != list3[1] != 0:
-                list4[0] /= 2
-                list4[0] = (int)(list4[0])
-                list4[1] /= 2
-                list4[1] = (int)(list4[1])
-                AlreadyWasAMonopoly[0] = 0
+                ChangingList4Divi(0, 1, 99, 0)
         if AlreadyWasAMonopoly[1] == 0 and list3[2] == list3[3] == list3[4] != 0:
-                list4[2] *= 2
-                list4[2] = (int)(list4[2])
-                list4[3] *= 2
-                list4[3] = (int)(list4[3])
-                list4[4] *= 2
-                list4[4] = (int)(list4[4])
-                AlreadyWasAMonopoly[1] = 1
+                ChangingList4Mult(2, 3, 4, 1)
         if AlreadyWasAMonopoly[1] == 1 and list3[2] != list3[3] != list3[4] != 0:
-                list4[2] /= 2
-                list4[2] = (int)(list4[2])
-                list4[3] /= 2
-                list4[3] = (int)(list4[3])
-                list4[4] /= 2
-                list4[4] = (int)(list4[4])
-                AlreadyWasAMonopoly[1] = 0
+                ChangingList4Divi(2, 3, 4, 1)
         if AlreadyWasAMonopoly[2] == 0 and list3[5] == list3[6] == list3[7] != 0:
-                list4[5] *= 2
-                list4[5] = (int)(list4[5])
-                list4[6] *= 2
-                list4[6] = (int)(list4[6])
-                list4[7] *= 2
-                list4[7] = (int)(list4[7])
-                AlreadyWasAMonopoly[2] = 1
+                ChangingList4Mult(5, 6, 7, 2)
         if AlreadyWasAMonopoly[2] == 1 and list3[5] != list3[6] != list3[7] != 0:
-                list4[5] /= 2
-                list4[5] = (int)(list4[5])
-                list4[6] /= 2
-                list4[6] = (int)(list4[6])
-                list4[7] /= 2
-                list4[7] = (int)(list4[7])
-                AlreadyWasAMonopoly[2] = 0
+                ChangingList4Divi(5, 6, 7, 2)
         if AlreadyWasAMonopoly[3] == 0 and list3[8] == list3[9] == list3[10] != 0:
-                list4[8] *= 2
-                list4[8] = (int)(list4[8])
-                list4[9] *= 2
-                list4[9] = (int)(list4[9])
-                list4[10] *= 2
-                list4[10] = (int)(list4[10])
-                AlreadyWasAMonopoly[3] = 1
+                ChangingList4Mult(8, 9, 10, 3)
         if AlreadyWasAMonopoly[3] == 1 and list3[8] != list3[9] != list3[10] != 0:
-                list4[8] /= 2
-                list4[8] = (int)(list4[8])
-                list4[9] /= 2
-                list4[9] = (int)(list4[9])
-                list4[10] /= 2
-                list4[10] = (int)(list4[10])
-                AlreadyWasAMonopoly[3] = 0
+                ChangingList4Divi(8, 9, 10, 3)
         if AlreadyWasAMonopoly[4] == 0 and list3[11] == list3[12] == list3[13] != 0:
-                list4[11] *= 2
-                list4[11] = (int)(list4[11])
-                list4[12] *= 2
-                list4[12] = (int)(list4[12])
-                list4[13] *= 2
-                list4[13] = (int)(list4[13])
-                AlreadyWasAMonopoly[4] = 1
+                ChangingList4Mult(11, 12, 13, 4)
         if AlreadyWasAMonopoly[4] == 1 and list3[11] != list3[12] != list3[13] != 0:
-                list4[11] /= 2
-                list4[11] = (int)(list4[11])
-                list4[12] /= 2
-                list4[12] = (int)(list4[12])
-                list4[13] /= 2
-                list4[13] = (int)(list4[13])
-                AlreadyWasAMonopoly[4] = 0
+                ChangingList4Divi(11, 12, 13, 4)
         if AlreadyWasAMonopoly[5] == 0 and list3[14] == list3[15] == list3[16] != 0:
-                list4[14] *= 2
-                list4[14] = (int)(list4[14])
-                list4[15] *= 2
-                list4[15] = (int)(list4[15])
-                list4[16] *= 2
-                list4[16] = (int)(list4[16])
-                AlreadyWasAMonopoly[5] = 1
+                ChangingList4Mult(14, 15, 16, 5)
         if AlreadyWasAMonopoly[5] == 1 and list3[14] != list3[15] != list3[16] != 0:
-                list4[14] /= 2
-                list4[14] = (int)(list4[14])
-                list4[15] /= 2
-                list4[15] = (int)(list4[15])
-                list4[16] /= 2
-                list4[16] = (int)(list4[16])
-                AlreadyWasAMonopoly[5] = 0
+                ChangingList4Divi(14, 15, 16, 5)
         if AlreadyWasAMonopoly[6] == 0 and list3[17] == list3[18] == list3[19] != 0:
-                list4[17] *= 2
-                list4[17] = (int)(list4[17])
-                list4[18] *= 2
-                list4[18] = (int)(list4[18])
-                list4[19] *= 2
-                list4[19] = (int)(list4[19])
-                AlreadyWasAMonopoly[6] = 1
+                ChangingList4Mult(17, 18, 19, 6)
         if AlreadyWasAMonopoly[6] == 1 and list3[17] != list3[18] != list3[19] != 0:
-                list4[17] /= 2
-                list4[17] = (int)(list4[17])
-                list4[18] /= 2
-                list4[18] = (int)(list4[18])
-                list4[19] /= 2
-                list4[19] = (int)(list4[19])
-                AlreadyWasAMonopoly[6] = 0
+                ChangingList4Divi(17, 18, 19, 6)
         if AlreadyWasAMonopoly[7] == 0 and list3[20] == list3[21] != 0:
-                list4[20] *= 2
-                list4[20] = (int)(list4[20])
-                list4[21] *= 2
-                list4[21] = (int)(list4[21])
-                AlreadyWasAMonopoly[7] = 1
+                ChangingList4Mult(20, 21, 99, 7)
         if AlreadyWasAMonopoly[7] == 1 and list3[20] != list3[21] != 0:
-                list4[20] /= 2
-                list4[20] = (int)(list4[20])
-                list4[21] /= 2
-                list4[21] = (int)(list4[21])
-                AlreadyWasAMonopoly[7] = 0
+                ChangingList4Divi(20, 21, 99, 7)
         print()
+
+# FirstPlace - 
+# SecondPlace - 
+# ThirdPlace - 
+def ChangingList4Mult(FirstPlace, SecondPlace, ThirdPlace, MonopolyLocation):
+        global list4
+        list4[FirstPlace] *= 2
+        list4[FirstPlace] = (int)(list4[FirstPlace])
+        list4[SecondPlace] *= 2
+        list4[SecondPlace] = (int)(list4[SecondPlace])
+        if ThirdPlace != 99:
+                list4[ThirdPlace] *= 2
+                list4[ThirdPlace] = (int)(list4[ThirdPlace])
+        AlreadyWasAMonopoly[MonopolyLocation] = 1
+        
+def ChangingList4Divi(FirstPlace, SecondPlace, ThirdPlace, MonopolyLocation):
+        global list4
+        list4[FirstPlace] /= 2
+        list4[FirstPlace] = (int)(list4[FirstPlace])
+        list4[SecondPlace] /= 2
+        list4[SecondPlace] = (int)(list4[SecondPlace])
+        if ThirdPlace != 99:
+                list4[ThirdPlace] /= 2
+                list4[ThirdPlace] = (int)(list4[ThirdPlace])
+        AlreadyWasAMonopoly[MonopolyLocation] = 0
+        
 
 def ChanceTime(PlayerEffected):
         DaNumberYouGot = random.randint(1, 1)
@@ -1301,7 +989,7 @@ def CommunityChest(PlayerEffected):
         DaNumberYouGot = random.randint(1, 1)
         print()
       
-def debugMode(PlayerDebug): #heyguysimdefinitelynotcheatingandijustlikelytypingveryuselesslongwordsallwithoutausinganyspaces
+def debugMode(PlayerDebug):
         global Player1Money
         global Player2Money
         global Player3Money
@@ -1323,7 +1011,7 @@ def debugMode(PlayerDebug): #heyguysimdefinitelynotcheatingandijustlikelytypingv
         global Player4Location
         print("Welcome to the place to change Ints/Strings, test different defs, and random funny things. (In no predictular order)\n(Also with no fail safes, so if you puta String for an int... You can get an error if the int isn't change before it is called to be use)")
         print("1 - Player in debug mode gets all buildings\n2 - Player in debug money == -69\n3 - Community Chest\n4 - Chance Time\n5 - Everything is free!!!\n6 - Make houses amount the same amount\n7 - Change list 1\n8 - Change list 2\n9 - Change list 3\n10 - Change list 4\n11 - Change list 5\n12 - Change Everyone Money Amount")
-        print("13 - Choice who is in jail\n14 - Move somewhere and activate its effect\n15 - Just move everyone somewhere\n16 - Test GameOver()\n17 - Test MONOPOLY()\n18 - Test DiceRoll()\n19 - Retest HowManyPlayers()\n20 - Test UseTheList()\n21 - Test dice picture\n22 - Change free parking amount")
+        print("13 - Choice who is in jail\n14 - Move somewhere and activate its effect\n15 - Just move everyone somewhere\n16 - Test GameOver()\n17 - Test MONOPOLY()\n18 - Test DiceRoll()\n19 - Retest HowManyPlayers()\n20 - Test lookupProperty()\n21 - Test dice picture(Currently broken)\n22 - Change free parking amount")
         print("23 - Change all useless rent ints\n24 - Change all useless house own int\n25 - Give everyone random buildings")
         s = "" + input()
         if s == "1":
@@ -1364,42 +1052,44 @@ def debugMode(PlayerDebug): #heyguysimdefinitelynotcheatingandijustlikelytypingv
                 for x in range(0, 28):
                         list5[x] = ""+input()
         elif s == "12":
-                Player1Money = input()
-                Player2Money = input()
-                Player3Money = input()
-                Player4Money = input()
+                Player1Money = ((int)(input()))
+                Player2Money = ((int)(input()))
+                Player3Money = ((int)(input()))
+                Player4Money = ((int)(input()))
         elif s == "13":
-                Player1InJail = input()
-                Player1InJail = input()
-                Player1InJail = input()
-                Player1InJail = input()
+                Player1InJail = ((int)(input()))
+                Player1InJail = ((int)(input()))
+                Player1InJail = ((int)(input()))
+                Player1InJail = ((int)(input()))
         elif s == "14":
-                PlayToGo = input()
+                PlayToGo = ((int)(input()))
                 LandedPlaces(PlayToGo, PlayerDebug)
         elif s == "15":
-                Player1Location = input()
-                Player2Location = input()
+                Player1Location = ((int)(input()))
+                Player2Location = ((int)(input()))
                 if Player3Location != 99999:
-                        Player3Location = input()
+                        Player3Location = ((int)(input()))
                 if Player4Location != 99999:
-                        Player4Location = input()
+                        Player4Location = ((int)(input()))
         elif s == "16":
-                GameOver()
+                GameOver(Player1Money, Player2Money, Player3Money, Player4Money)
         elif s == "17":
                 MONOPOLY()
         elif s == "18":
                 DiceRoll(PlayerDebug)
+                rollOne = ReturnRollOne()
+                rollTwo = ReturnRollTwo()
         elif s == "19":
                 HowManyPlayers()
         elif s == "20":
-                PlayToGo = input()
-                UseTheList(PlayToGo, PlayerDebug)
-        elif s == "21":
-                Picture = input()
-                print(DicePictures[Picture])
+                PlayToGo = ((int)(input()))
+                lookupProperty(PlayToGo, PlayerDebug)
+        #elif s == "21":
+        #        Picture = input()
+        #        print(DicePictures[Picture])
         elif s == "22":
                 global FreeParkingMoney
-                FreeParkingMoney = input()
+                FreeParkingMoney = ((int)(input()))
         elif s == "23":
                 global MediterraneanAveRent
                 global BalticAveRent
@@ -1430,34 +1120,34 @@ def debugMode(PlayerDebug): #heyguysimdefinitelynotcheatingandijustlikelytypingv
                 global ParkPlaceRent
                 global BoardwalkRent
                 
-                MediterraneanAveRent = input()
-                BalticAveRent = input()
-                ReadingRailroadRent = input()
-                OrientalAveRent = input()
-                VermontAveRent = input()
-                ConnecticutAveRent = input()
-                StCharlesPlaceRent = input()
-                ElectricCompanyRent = input()
-                StatesAveRent = input()
-                VirginiaAveRent = input()
-                PennsylvaniaRailroadRent = input()
-                StJamesPlaceRent = input()
-                TennesseeAveRent = input()
-                NewYorkAveRent = input()
-                KentuckyAveRent = input()
-                IndianaAveRent = input()
-                IllinoisAveRent = input()
-                BORailroadRent = input()
-                AtlanticAveRent = input()
-                VentnorAveRent = input()
-                WaterWorksRent = input()
-                MarvinGardensRent = input()
-                PacificAveRent = input()
-                NorthCarolinaAveRent = input()
-                PennsylvaniaAveRent = input()
-                ShortLineRailroadRent = input()
-                ParkPlaceRent = input()
-                BoardwalkRent = input()
+                MediterraneanAveRent = ((int)(input()))
+                BalticAveRent = ((int)(input()))
+                ReadingRailroadRent = ((int)(input()))
+                OrientalAveRent = ((int)(input()))
+                VermontAveRent = ((int)(input()))
+                ConnecticutAveRent = ((int)(input()))
+                StCharlesPlaceRent = ((int)(input()))
+                ElectricCompanyRent = ((int)(input()))
+                StatesAveRent = ((int)(input()))
+                VirginiaAveRent = ((int)(input()))
+                PennsylvaniaRailroadRent = ((int)(input()))
+                StJamesPlaceRent = ((int)(input()))
+                TennesseeAveRent = ((int)(input()))
+                NewYorkAveRent = ((int)(input()))
+                KentuckyAveRent = ((int)(input()))
+                IndianaAveRent = ((int)(input()))
+                IllinoisAveRent = ((int)(input()))
+                BORailroadRent = ((int)(input()))
+                AtlanticAveRent = ((int)(input()))
+                VentnorAveRent = ((int)(input()))
+                WaterWorksRent = ((int)(input()))
+                MarvinGardensRent = ((int)(input()))
+                PacificAveRent = ((int)(input()))
+                NorthCarolinaAveRent = ((int)(input()))
+                PennsylvaniaAveRent = ((int)(input()))
+                ShortLineRailroadRent = ((int)(input()))
+                ParkPlaceRent = ((int)(input()))
+                BoardwalkRent = ((int)(input()))
         elif s == "24":
                 global MediterraneanAve
                 global BalticAve
@@ -1488,35 +1178,35 @@ def debugMode(PlayerDebug): #heyguysimdefinitelynotcheatingandijustlikelytypingv
                 global ParkPlace
                 global Boardwalk
                 
-                MediterraneanAve = input()
-                BalticAve = input()
-                ReadingRailroad = input()
-                OrientalAve = input()
-                VermontAve = input()
-                ConnecticutAve = input()
-                StCharlesPlace = input()
-                ElectricCompany = input()
-                StatesAve = input()
-                VirginiaAve = input()
-                PennsylvaniaRailroad = input()
-                StJamesPlace = input()
-                TennesseeAve = input()
-                NewYorkAve = input()
-                FreeParkingMoney = input()
-                KentuckyAve = input()
-                IndianaAve = input()
-                IllinoisAve = input()
-                BORailroad = input()
-                AtlanticAve = input()
-                VentnorAve = input()
-                WaterWorks = input()
-                MarvinGardens = input()
-                PacificAve = input()
-                NorthCarolinaAve = input()
-                PennsylvaniaAve = input()
-                ShortLineRailroad = input()
-                ParkPlace = input()
-                Boardwalk = input()
+                MediterraneanAve = ((int)(input()))
+                BalticAve = ((int)(input()))
+                ReadingRailroad = ((int)(input()))
+                OrientalAve = ((int)(input()))
+                VermontAve = ((int)(input()))
+                ConnecticutAve = ((int)(input()))
+                StCharlesPlace = ((int)(input()))
+                ElectricCompany = ((int)(input()))
+                StatesAve = ((int)(input()))
+                VirginiaAve = ((int)(input()))
+                PennsylvaniaRailroad = ((int)(input()))
+                StJamesPlace = ((int)(input()))
+                TennesseeAve = ((int)(input()))
+                NewYorkAve = ((int)(input()))
+                FreeParkingMoney = ((int)(input()))
+                KentuckyAve = ((int)(input()))
+                IndianaAve = ((int)(input()))
+                IllinoisAve = ((int)(input()))
+                BORailroad = ((int)(input()))
+                AtlanticAve = ((int)(input()))
+                VentnorAve = ((int)(input()))
+                WaterWorks = ((int)(input()))
+                MarvinGardens = ((int)(input()))
+                PacificAve = ((int)(input()))
+                NorthCarolinaAve = ((int)(input()))
+                PennsylvaniaAve = ((int)(input()))
+                ShortLineRailroad = ((int)(input()))
+                ParkPlace = ((int)(input()))
+                Boardwalk = ((int)(input()))
         elif s == "25":
                 if Player3Location == 99999:
                         for x in range(0, 28):
@@ -1527,6 +1217,7 @@ def debugMode(PlayerDebug): #heyguysimdefinitelynotcheatingandijustlikelytypingv
                 else:
                         for x in range(0, 28):
                                 list3[x] = random.randint(1, 4)
+        input()
 
 SellingValue = [30, 30, 50, 50, 60, 70, 70, 80, 90, 90, 100, 110, 110, 120, 130, 130, 140, 150, 150, 160, 175, 200, 100, 100, 100, 100, 75, 75]
 WhatYouThinkingOfSelling = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -1575,44 +1266,6 @@ def HouseForSells(PlayerWhosSelling):
                                         break
                 
 
-DicePictures = ['''
-  _________ 
- |         |
- |         |
- |    0    |
- |         |
- |_________|''','''
-  _________ 
- |         |
- |  0      |
- |         |
- |      0  |
- |_________|''','''
-  _________ 
- |         |
- |  0      |
- |    0    |
- |      0  |
- |_________|''','''
-  _________ 
- |         |
- |  0   0  |
- |         |
- |  0   0  |
- |_________|''','''
-  _________ 
- |         |
- |  0   0  |
- |    0    |
- |  0   0  |
- |_________|''','''
-  _________ 
- |         |
- |  0   0  |
- |  0   0  |
- |  0   0  |
- |_________|''']
-
 DoublesForJail = 0
         
 x = HowManyPlayers()
@@ -1631,6 +1284,9 @@ elif x == 2:
     Player3Money = 1
 playerTurn = 1
 while True:
+    print()
+    print()
+    os.system('cls')
     if playerTurn == 5:
         playerTurn = 1
     elif playerTurn == 4 and Player4Location == 99999:
@@ -1645,6 +1301,8 @@ while True:
                 if playerTurn == 1:
                     Roll = 0
                     Roll = DiceRoll(1)
+                    rollOne = ReturnRollOne()
+                    rollTwo = ReturnRollTwo()
                     print("Player 1 has rolled a " + str(rollOne) +" and a "+ str(rollTwo) +" Which equals "+ str(Roll) + "!\nPress Enter to Move.")
                     input()
                     if Player1InJail == 1 and rollOne != rollTwo and Player1LenghtInJail == 3:
@@ -1678,6 +1336,8 @@ while True:
                 elif playerTurn == 2:
                     Roll = 0
                     Roll = DiceRoll(2)
+                    rollOne = ReturnRollOne()
+                    rollTwo = ReturnRollTwo()
                     print("player 2 has rolled a " + str(rollOne) +" and a "+ str(rollTwo) +" Which equals "+ str(Roll) + "!\nPress Enter to Move.")
                     input()
                     if Player2InJail == 1 and rollOne != rollTwo and Player2LenghtInJail == 3:
@@ -1711,6 +1371,8 @@ while True:
                 elif playerTurn == 3:
                     Roll = 0
                     Roll = DiceRoll(3)
+                    rollOne = ReturnRollOne()
+                    rollTwo = ReturnRollTwo()
                     print("Player 3 has rolled a " + str(rollOne) +" and a "+ str(rollTwo) +" Which equals "+ str(Roll) + "!\nPress Enter to Move.")
                     input()
                     if Player3InJail == 1 and rollOne != rollTwo and Player3LenghtInJail == 3:
@@ -1742,6 +1404,8 @@ while True:
                 else:
                     Roll = 0
                     Roll = DiceRoll(4)
+                    rollOne = ReturnRollOne()
+                    rollTwo = ReturnRollTwo()
                     print("Player 4 has rolled a " + str(rollOne) +" and a "+ str(rollTwo) +" Which equals "+ str(Roll) + "!\nPress Enter to Move.")
                     input()
                     if Player4InJail == 1 and rollOne != rollTwo and Player3LenghtInJail == 3:
@@ -1785,7 +1449,7 @@ while True:
                 for x in range(0, 60):
                         print("")
                 os.system('cls')
-                os.system('clear')
+                #os.system('clear')
                 for x in range(0, 28):
                         if x < 22:
                                 print(list1[x] + ", cost - " + str(list2[x])+ ", the owner is player - " + str(list3[x]) + " and the rent is currently " + str(list4[x])+" Houses on this place "+ str(HousesArray[x]) +".")
